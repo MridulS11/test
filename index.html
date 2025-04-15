@@ -26,32 +26,41 @@
             Fetch
         </button>
 
-        <pre id="result" class="mt-6 bg-gray-50 p-4 rounded-md text-sm overflow-x-auto text-gray-800 border border-gray-200"></pre>
+        <div id="result" class="mt-6 bg-gray-50 p-4 rounded-md text-sm overflow-x-auto text-gray-800 border border-gray-200"></div>
     </div>
 
-    <script>
-        async function fetchData() {
-            const id = document.getElementById("userId").value.trim();
-            const resultBox = document.getElementById("result");
+   <script>
+    async function fetchData() {
+        const id = document.getElementById("userId").value.trim();
+        const resultBox = document.getElementById("result");
 
-            if (!id) {
-                resultBox.textContent = "⚠️ Please enter an ID.";
-                return;
-            }
+        resultBox.innerHTML = ""; // clear previous
 
-            try {
-                const res = await fetch(`https://h5i0aszaab.execute-api.ap-south-1.amazonaws.com/default/fetchDataById?id=${id}`);
-                const data = await res.json();
-
-                if (res.ok) {
-                    resultBox.textContent = JSON.stringify(data, null, 2);
-                } else {
-                    resultBox.textContent = `❌ Error: ${data.error}`;
-                }
-            } catch (err) {
-                resultBox.textContent = "❌ Failed to fetch data.";
-            }
+        if (!id) {
+            resultBox.innerHTML = `<p class="text-red-600">⚠️ Please enter an ID.</p>`;
+            return;
         }
-    </script>
+
+        try {
+            const res = await fetch(`https://h5i0aszaab.execute-api.ap-south-1.amazonaws.com/default/fetchDataById?id=${id}`);
+            const data = await res.json();
+
+            if (res.ok) {
+                resultBox.innerHTML = `
+                    <div class="bg-green-50 border border-green-300 rounded-lg p-4 shadow-sm">
+                        <h3 class="text-lg font-semibold text-green-800 mb-2">✅ User Found</h3>
+                        <p><span class="font-medium">Name:</span> ${data.name}</p>
+                        <p><span class="font-medium">Age:</span> ${data.age}</p>
+                    </div>
+                `;
+            } else {
+                resultBox.innerHTML = `<p class="text-red-600">❌ Error: ${data.error}</p>`;
+            }
+        } catch (err) {
+            resultBox.innerHTML = `<p class="text-red-600">❌ Failed to fetch data.</p>`;
+        }
+    }
+</script>
+
 </body>
 </html>
